@@ -1,0 +1,1404 @@
+﻿Links to study from :
+@@@@@@@@@@@@@@@@@@@@@@@   POST MSCI @@@@@@@@@@@@@@@@@@@@@@@@@: 
+https://www.javamadesoeasy.com/p/interview-questions.html
+https://dzone.com/articles/top-15-java-multithreading-concurrency-interview-q
+http://www.java67.com/2012/09/top-10-tricky-java-interview-questions-answers.html
+https://javapapers.com/spring/spring-mvc-handler-interceptor/ 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Job number: 18050588
+Job number: 18050591
+Job number: 18048033
+https://www.linkedin.com/jobs/search/?currentJobId=845167712&locationId=in%3A7150
+https://www.geeksforgeeks.org/tag/morgan-stanley/
+
+types of class loaders
+
+https://stackoverflow.com/questions/35246177/find-the-max-difference-pair-in-the-array  -- visa
+
+************************************************************************
+REVERSE a STRING:
+String s = "nikhil";
+		char a[] = s.toCharArray();
+		char temp;
+		for(int i =0,j=a.length-1;i<a.length/2;i++,j--)
+		{
+			temp=a[i];
+			a[i]=a[j];
+			a[j]=temp;
+		}
+		
+		for (char c : a) {
+			System.out.print(c);
+		}
+
+#########################################################################
+How to read a file and count the number of words in it.
+ 
+
+       System.out.println ("Counting Words");       
+       FileReader fr = new FileReader ("src/Test.txt");        
+       BufferedReader br = new BufferedReader (fr);     
+       String line = br.readLine();
+       int count = 0;
+       while (line != null) {
+          String []parts = line.split(" ");
+          for( String w : parts)
+          {
+        	  System.out.println("Words in a line - : " + w);
+            count++;        
+          }
+          System.out.println("Printing line : _ "+ line);
+          line = br.readLine();
+       }         
+       System.out.println(count);
+    
+	
+	Or
+	
+	
+	
+	import java.io.FileReader;
+import java.io.BufferedReader;
+import java.util.StringTokenizer;
+ 
+class NumberWords {
+public static void main(String[] args) throws Exception {
+FileReader fr = new FileReader("c:/test.txt");
+BufferedReader br = new BufferedReader(fr);
+String line = "", str = "";
+int a = 0;
+int b = 0;
+while ((line = br.readLine()) != null) {
+str += line + " ";
+b++;
+}
+System.out.println("Totally " + b + " lines");
+ 
+System.out.println(str);
+ 
+StringTokenizer st = new StringTokenizer(str);
+while (st.hasMoreTokens()) {
+String s = st.nextToken();
+a++;
+}
+System.out.println("File has " + a + " words are in the file");
+}
+ 
+}
+
+########################################################################
+The class in which getRequestAuthInterceptor and addInterceptors is written is same and 
+is annotated with @Configuration
+
+Class in which both methods are present : 
+@Configuration
+@EnableRetry
+@ComponentScan(basePackages = { "com.mft" })
+public class ApplicationConfig extends WebMvcConfigurerAdapter {
+
+
+
+
+	@Bean
+	RequestAuthInterceptor getRequestAuthInterceptor() {
+		return new RequestAuthInterceptor(); // Calls the class which is extending the HandlerInterceptorAdapter
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(getRequestAuthInterceptor()).excludePathPatterns("/swagger-ui/**",
+				"/swagger-resources/**", "/v2/api-docs/**");
+
+	}
+
+
+
+package com.mft.dms.interceptors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.HttpStatus;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.mft.dms.core.InjectableLogger;
+
+public class RequestAuthInterceptor extends HandlerInterceptorAdapter {
+
+	/** The logger. */
+	@InjectableLogger
+	Logger logger;
+
+	@Value("${mft.rest.username}")
+	private String authUsername;
+
+	@Value("${mft.rest.password}")
+	private String authPassword;
+
+	static final String NO_AUTH_ERROR = "Not Authorized! No Authentication passed in header";
+	static final String INCORRECT_FORMAT_ERROR = "Incorrect format for Authentication! Format should be username:password";
+	static final String INVALID_CRED_ERROR = "Authentication Error! Invalid Credentials";
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+			Exception exception) throws Exception {
+		logger.debug("afterCompletion");
+		super.afterCompletion(request, response, handler, exception);
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		logger.debug("postHandle");
+		super.postHandle(request, response, handler, modelAndView);
+	}
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		logger.info("preHandle");
+		boolean reqValid = false;
+		String headerAuth = request.getHeader("Authorization");	
+		
+		if (null == headerAuth) {
+			logger.error(NO_AUTH_ERROR);
+		} else {
+			String[] splitHeaderAuth = headerAuth.split(":");
+			if (splitHeaderAuth.length != 2) {
+				logger.error(INCORRECT_FORMAT_ERROR);
+			} else {
+				String username = splitHeaderAuth[0];
+				String password = splitHeaderAuth[1];
+				if (authUsername.equals(username) && authPassword.equals(password)) {
+					logger.info("Request Authenticated successfully for {}", request.getRequestURI());
+					reqValid = true;
+				} else {
+					logger.error(INVALID_CRED_ERROR);
+				}
+			}
+		}
+
+		if (!reqValid) {
+			logger.info("Authentication Failed for {}", request.getRequestURI());
+			response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+		}
+		return reqValid;
+	}
+}
+
+
+########################################################################
+
+
+
+
+
+------------------->Custom Exceptions are checked or Unchecked exceptions ?
+class UserException extends Exception {
+    UserException(String s) {
+           super(s);
+    }
+}
+By extending java.lang.Exception, we can create checked exception.
+
+class UserException extends RuntimeException {
+    UserException(String s) {
+           super(s);
+    }
+	
+	
+}
+
+By extending java.lang.RuntimeException, we can create unchecked exception.
+########################################################################
+@Override
+public int hashCode() {
+ final int prime = 31;
+ int result = 1;
+ result = prime * result + ((name == null) ? 0 : name.hashCode());
+ return result;
+}
+@Override
+ public boolean equals(Object obj) {
+  
+  Country other = (Country) obj;
+   if (name.equalsIgnoreCase((other.name)))
+   return true;
+  return false;
+ }
+#########################################
+Summary of complexity of methods in HashMap >
+
+1)put(K key, V value) -- Worst case : O(n) ,Best case : O(1)
+2)get(Object key) -- Worst case : O(n) ,Best case : O(1)
+#########################################
+ROWNUM function in oracle sql
+Highest salary using oracle sql and not MYSQL
+#########################################
+Super and this from javatpoint nyhw
+#########################################
+FORK JOIN FRAMEWORK IN JAVA 7
+#########################################
+Features of java 7 and java 8
+#########################################
+************************************************************************
+Reference	Object	Data	          method
+----------------------------------------------------
+Super	    Super	Super	          Super
+Sub	        Sub	    Super + Sub	      Super + Sub
+Sub	        Sub	    Overridden(Sub)	  Overridden(Sub)
+Super	    Sub	    Super	          Super
+Super	    Sub	    Overridden(Super) Overridden(Sub)
+
+NOTE : In case of super sub combo, you cant access sub ka data anyhow using this combo.
+Also, you can access sub k methods only if they are overriden otherwise not.
+
+FOR Static methods and reference variables : data and method would always be of reference type.(see last page of kamal sirf notes)
+************************************************************************
+Interface methods are public and abstract implicitly. They cant be private, protected, static, native, etc.
+Implementing classes should add the keyword public in the method. Implemented methods must be public.
+************************************************************************
+Dependency Injection ::
+Email class - sendMessage method.
+Person class - new Email().sendMesaage();
+
+This is tightly coupled.
+
+Now if you want to make it loosely coupled so in that case:
+interface Message{
+void sendMessage();
+} 
+
+class EmailViaGmail implements Message{}
+class EmailViaYahoo implements Message{}
+class EmailViaOrkut implements Message{}
+
+
+Class Person
+{
+Person(Message messageInterfaceRef){}
+}
+
+But in this case also you will create a person object from the main method using the keyword new.
+what if i dont want to use the new keyword at all? how would you achieve dependency injection?
+
+Below are the 2 ways of the same: one via springMvc and other via Spring boot:
+
+1 - Spring MVC - you can create object using constructor injection. With this you are not using new keyword but letting spring do everything for you.
+2 - Spring boot - a) you can annotate your person and email classes with @component and annotate your main spring class with 
+@componentScan annotation by mentioning the package.
+But then the question comes while passing the interface reference to the person class how the person class will come to know which instance to instantiate?
+whether EmailViaGmail,EmailViaYahoo or EmailViaOrkut.
+So in this case you will use @qualifier annotation on your interface references and class as well meaning:
+
+@Qualifier("EmailViaGmail")					@Qualifier("EmailViaGmail")
+Message emailViaGmail						class EmailViaGmail{}
+
+@Qualifier("EmailViaYahoo")					@Qualifier("EmailViaYahoo")
+Message emailViaYahoo						class EmailViaYahoo{}
+
+
+See @Qualifier service in MNS projects for more understanding.
+
+
+*************************************************************************
+Why the main method of the spring calls the same class:
+
+  public static void main(String[] args) {
+        SpringApplication.run(MtpOperationalSupplyChainStockApplication.class, args);
+    }
+	
+because it tells spring that you have to start scanning from this class.
+	
+	
+*************************************************************************
+ASCII Values : 
+65  A  
+48  0(zero) 
+97  a
+*************************************************************************
+GroupBy and OrderBy and Having and where clauses
+
+1-Columns present in GroupBy need not be there in select statements, But columns(other than the column present in aggegate function) 
+present in select statement need to be there in GroupBy clause.
+2-Aggregate functions present in having clause need not be there in select statement, but aggregate functions present in 
+select statement need to be there in having clause(if your query consists of having clause)
+*************************************************************************
+The Serialization runtime associates a version number with each Serializable class 
+called a SerialVersionUID, which is used during Deserialization to verify that sender
+and reciever of a serialized object have loaded classes for that object which are 
+compatible with respect to serialization. If the reciever has loaded a class for the
+object that has different UID than that of corresponding sender’s class, 
+the Deserialization will result in an InvalidClassException. 
+A Serializable class can declare its own UID explicitly by declaring a field name.
+
+It must be static, final and of type long.
+i.e- ANY-ACCESS-MODIFIER static final long serialVersionUID=42L;
+*************************************************************************
+What happens when you only print e in catch clause and not e.getStackTrace or e.printStackTrace?
+
+when you print only e then in that case you get the output having the class namem, the exception name  and the reason/cause 
+for the same. for details see below : 
+
+ System.out.println("e :- " + e);
+               System.out.println("e.getMessage() :- " + e.getMessage());
+               System.out.println("e.getLocalizedMessage() :- " + e.getLocalizedMessage());
+               System.out.println("e.getCause() :- " + e.getCause());
+               System.out.println("e.getClass() :- " + e.getClass());
+               e.printStackTrace();
+               System.out.println("e.getSuppressed() :- " + e.getSuppressed());
+			   
+			   
+			   
+OUTPUT
+e :- java.io.InvalidClassException: Employee1; no valid constructor
+e.getMessage() :- Employee1; no valid constructor
+e.getLocalizedMessage() :- Employee1; no valid constructor
+e.getCause() :- null
+e.getClass() :- class java.io.InvalidClassException
+java.io.InvalidClassException: Employee1; no valid constructor
+	at java.io.ObjectStreamClass$ExceptionInfo.newInvalidClassException(Unknown Source)
+	at java.io.ObjectStreamClass.checkDeserialize(Unknown Source)
+	at java.io.ObjectInputStream.readOrdinaryObject(Unknown Source)
+	at java.io.ObjectInputStream.readObject0(Unknown Source)
+	at java.io.ObjectInputStream.readObject(Unknown Source)
+	at SerializeEmployee.main(SerializeEmployee.java:84)
+e.getSuppressed() :- [Ljava.lang.Throwable;@776ec8df
+*************************************************************************
+An instance method cannot override a static method, and a static method cannot hide an instance method. 
+For example, the following program has two compiler errors.
+
+/* Java program to show that if static methods are redefined by
+   a derived class, then it is not overriding but hidding. */
+ 
+// Superclass
+class Base {
+     
+    // Static method in base class which will be hidden in subclass 
+    public static void display() {
+        System.out.println("Static or class method from Base");
+    }
+     
+     // Non-static method which will be overridden in derived class 
+     public void print()  {
+         System.out.println("Non-static or Instance method from Base");
+    }
+}
+ 
+// Subclass
+class Derived extends Base {
+     
+    // Static is removed here (Causes Compiler Error) 
+    public void display() {
+        System.out.println("Non-static method from Derived");
+    }
+     
+    // Static is added here (Causes Compiler Error) 
+    public static void print() {
+        System.out.println("Static method from Derived");
+   }
+}
+***********************************************************************
+Annotations : @RequestParam ,@RequestMapping , @PathVariable , @RequestBody , @RequestMapping(value, produces, consumes, method)
+
+Dependency needed for restServices :
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+Packages : org.springframework.web.client.RestClientException,org.springframework.web.client.RestTemplate,
+import org.springframework.http.HttpStatus;import org.springframework.http.ResponseEntity;
+
+
+
+The restController and RequestMapping annotations are used just to write your controller classes. But they dont expose.
+By using the below code, you set the type of requestFactory that you wanna use.
+	/** The timeout. */
+	@Value("${resttemplate.connection.timeout}")
+	private int timeout;
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate(createRequestFactory());
+	}
+
+	private ClientHttpRequestFactory createRequestFactory() {
+
+		SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+		clientHttpRequestFactory.setReadTimeout(timeout);
+		clientHttpRequestFactory.setConnectTimeout(timeout);
+		return clientHttpRequestFactory;
+	}
+
+	
+	OR 
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
+		restTemplate.setInterceptors(Collections.singletonList(new RequestLoggingInterceptor()));
+		return restTemplate;
+	}
+
+	
+	private ClientHttpRequestFactory clientHttpRequestFactory() {
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+
+		log.debug("HTTP componenet factory {}", factory);
+		return factory;
+	}
+
+***********************************************************************
+Dependecy to connect to database:
+		<dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.1</version>
+        </dependency>
+
+Properties to be added
+#Basic Spring Boot Config for Oracle
+spring.datasource.url= jdbc:oracle:thin:@//spring.guru.csi0i9rgj9ws.us-east-1.rds.amazonaws.com:1521/ORCL
+spring.datasource.username=system
+spring.datasource.password=manager
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+ 
+#hibernate config
+spring.jpa.database-platform=org.hibernate.dialect.Oracle10gDialect
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^^ Actual Properties present for DB connection
+
+# ===============================
+# = JPA
+# ===============================
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+spring.jpa.show-sql = true
+spring.jpa.properties.hibernate.jdbc.batch_size=50
+spring.jpa.properties.hibernate.order_inserts=true
+spring.jpa.properties.hibernate.order_updates=true
+#spring.jpa.properties.hibernate.jdbc.batch_versioned_data=$[spring.jpa.properties.hibernate.jdbc.batch_versioned_data.oscs]
+spring.jpa.properties.hibernate.generate_statistics=false
+# ===============================
+# = Database details
+# ===============================
+spring.datasource.url=<OVERRIDE>
+spring.datasource.username=<OVERRIDE>
+spring.datasource.password=<OVERRIDE>
+
+
+
+@Entity
+@Table(name = "movement_type", schema = "OSCS")
+@NamedQuery(name = "MovementType.findAll", query = "SELECT m FROM MovementType m")
+public class MovementType implements Serializable {
+    static final long serialVersionUID = 1L;
+	
+	
+And Repo k upar @Transactional
+
+***********************************************************************
+JUnit Mocking : 
+
+MockRestServiceServer mockRestServiceServer;
+
+	@Mock
+	RestTemplate mockRestTemplate;
+
+@Before
+	public void setup() {
+		mockRestTemplate = new RestTemplate();
+		mockRestServiceServer = MockRestServiceServer.bindTo(mockRestTemplate).ignoreExpectOrder(false).build();
+		ReflectionTestUtils.setField(commonService, "restTemplate", mockRestTemplate);
+		ReflectionTestUtils.setField(commonService, "publishMessageService", publishMessageService);
+		ReflectionTestUtils.setField(commonService, "locationService", locationService);
+
+		ReflectionTestUtils.setField(sandHouseKeepingService, "locationService", locationService);
+		ReflectionTestUtils.setField(sandHouseKeepingService, "movementStockInvRepository", movementStockInvRepository);
+		ReflectionTestUtils.setField(sandHouseKeepingService, "stockInventoryRepository", stockInventoryRepository);
+		ReflectionTestUtils.setField(sandHouseKeepingService, "restTemplate", mockRestTemplate);
+
+	}
+
+
+mockRestServiceServer.expect(ExpectedCount.manyTimes(), requestTo(commonService.getHousekeepingSandAlcoUrl()))
+				.andExpect(method(org.springframework.http.HttpMethod.POST))
+				.andRespond(withSuccess(getSandHousekeepingRecordsData(), MediaType.APPLICATION_JSON));
+		
+		doReturn(SandRecordListNew).when(stockInventoryRepository)
+		.findByIntoStoreDateAndStockInvStatusAndMinTradeableQtyInAndUpcEanInAndDepotIdInAndStoreIdIn(
+				anyObject(), anyInt(), anySet(), anySet(), anySet(), anySet());
+
+
+ https://www.concretepage.com/spring/spring-mvc/spring-rest-client-resttemplate-consume-restful-web-service-example-xml-json -- 
+https://stackoverflow.com/questions/42829823/whats-the-difference-between-responseentity-and-httpentity-in-spring -- Difference between Entity and ResponseEntity
+
+Difference between resttemplate.exchange and resttemplate.postforobject
+***********************************************************************
+[‎8/‎14/‎2018 2:47 PM]  
+jis class k upar @Configuration hai uske andar @bean rakhne ka kya need hai?
+dono objects hi toh banate hai
+ 
+[‎8/‎14/‎2018 2:48 PM]  Ramesh Kadam, Dheeraj:  
+@Bean nahi banane toh @Configuration lagane se kuch matlab nahi banta
+@Config defines ke you are using it for some configuration
+which ideally means there should be some bean definitions inside
+nahi toh class banane ka kuch matlab nahi hai
+*********************************************************************** 
+String methods : S2I4R GETTER(SIR GETTER)
+***********************************************************************
+1 - Conversions : 
+string to primitive : Integer.parseInt("")
+primitive to string : .toString()
+
+String to wrapper : Integer.valueOf("")
+wrapper to String : .toString();
+
+wrapper to primitive : n.intValue(wrapperValue)
+primitive to wrapper : Constructors
+***********************************************************************
+StringBuffer Methods : length(), capacity(), reverse(), append("") (it appends at the last), insert(index, String),
+insert(index, character), delete(strtIndex, endIndex), deleteCharAt(index), replace(strtIndex, endIndex, String)
+***********************************************************************
+If a return statement is written inside the catch block and the cursor comes in the catch block, then in that case finally block would be executed first.
+
+If an exception is thrown from the catch block, the finally block would be executed first.
+***********************************************************************
+Can i call procedure from my select statement?
+what is transaction mangement?
+what all can be rolledback? delete/drop/truncate?
+when you execute left join query from java then in that case how do you handle nulls in java? is there need to handle nulls?
+semaphores
+citiustech sandeep questions
+java 8
+executow framework
+***********************************************************************
+Hierarchy order LOG4J
+
+ALL
+TRACE
+DEBUG
+INFO
+WARN
+ERROR
+FATAL
+OFF
+************************************************************************
+List is ordered and set is not. what if i want to use a set and maintain the order?
+Use HashSet if you don't want to maintain any order of elements. 
+Use LinkedHashSet if you want to maintain insertion order of elements. 
+Use TreeSet if you want to sort the elements according to some Comparator.
+************************************************************************
+52. Select 20 % of salary from John , 10% of Salary for Roy and for other 15 % of salary from employee table
+SELECT FIRST_NAME, CASE FIRST_NAME WHEN 'John' THEN SALARY * .2 WHEN 'Roy' THEN SALARY * .10 ELSE SALARY * .15 END "Deduced_Amount" FROM EMPLOYEE
+************************************************************************
+53. Select Banking as 'Bank Dept', Insurance as 'Insurance Dept' and Services as 'Services Dept' from employee table
+
+SQL Queries in Oracle, SELECT distinct DECODE (DEPARTMENT, 'Banking', 'Bank Dept', 'Insurance', 'Insurance Dept', 'Services', 'Services Dept') FROM EMPLOYEE
+************************************************************************
+Select Last Name from employee table which contain only numbers
+
+Select * from EMPLOYEE where lower(LAST_NAME)=upper(LAST_NAME)
+************************************************************************
+Write a query to rank employees based on their incentives for a month
+
+select FIRST_NAME,INCENTIVE_AMOUNT,DENSE_RANK() OVER (PARTITION BY INCENTIVE_DATE ORDER BY INCENTIVE_AMOUNT DESC) AS Rank from EMPLOYEE a, INCENTIVES b where a.EMPLOYEE_ID=b.EMPLOYEE_REF_ID
+************************************************************************
+Select first_name, incentive amount from employee and incentives table for all employees even if they didn't get incentives and set incentive amount as 0 for those employees who didn't get incentives.
+SQL Queries in Oracle, Select FIRST_NAME,nvl(INCENTIVE_AMOUNT,0) from employee a left join incentives B on A.EMPLOYEE_ID=B.EMPLOYEE_REF_ID
+************************************************************************
+Select TOP 2 salary from employee table
+
+SQL Queries in Oracle, select * from (select * from employee order by SALARY desc) where rownum <3
+************************************************************************
+Select 2nd Highest salary from employee table
+
+SQL Queries in Oracle, select min(salary) from (select * from (select * from employee order by SALARY desc) where rownum <3)
+************************************************************************
+Select TOP 2 salary from employee table
+
+SQL Queries in Oracle, select * from (select * from employee order by SALARY desc) where rownum <3
+************************************************************************
+Find the 3rd MAX salary in the emp table.
+select distinct sal from emp e1 where 3 = (select count(distinct sal) from emp e2 where e1.sal <= e2.sal);
+************************************************************************
+Select LAST n records from a table
+select * from emp minus select * from emp where rownum <= (select count(*) - &n from emp);
+************************************************************************
+How to get 3 Max salaries ?
+select distinct sal from emp a where 3 >= (select count(distinct sal) from emp b where a.sal <= b.sal) order by a.sal desc;
+************************************************************************
+Write a SQL query to fetch only odd rows from table.
+Ans. This can be achieved by using Row_number in SQL server-
+
+SELECT E.EmpId, E.Project, E.Salary
+FROM (
+    SELECT *, Row_Number() OVER(ORDER BY EmpId) AS RowNumber
+    FROM EmployeeSalary
+) E
+WHERE E.RowNumber % 2 = 1
+************************************************************************
+Select FIRST n records from a table.
+select * from emp where rownum <= &n;
+************************************************************************
+Select DISTINCT RECORDS from emp table without using distinct.
+select * from emp a where  rowid = (select max(rowid) from emp b where  a.empno=b.empno);
+************************************************************************
+Count the totalsa  deptno wise where more than 2 employees exist.
+SELECT  deptno, sum(sal) As totalsal
+FROM emp
+GROUP BY deptno
+HAVING COUNT(empno) > 2
+************************************************************************
+
+SQL Queries hands on : 
+
+http://a4academics.com/interview-questions/53-database-and-sql/397-top-100-database-sql-interview-questions-and-answers-examples-queries?showall=&limitstart= , https://www.folkstalk.com/2011/12/sql-queries-interview-questions-oracle.html , https://www.techonthenet.com/oracle/functions/lead.php , http://www.bullraider.com/database/sql-tutorial/7-complex-queries-in-sql , 
+https://mindmajix.com/oracle-pl-sql-interview-questions , http://artoftesting.com/interviewSection/sql-queries-for-interview.html , https://career.guru99.com/top-50-oracle-interview-questions-and-answers/
+************************************************************************
+Class A - has nothing.
+Class B extends A - has a non parameterized constructor.
+No Error in this case.
+
+Class A - has Parameterized Constructor.
+Class B extends A - has a non parameterized constructor.
+Compile time error since class A doesnt have non paramterized constructor.
+
+
+
+If you have a protected constructor in class A in package p and you try to make object of class A in package p2 then it will give you error even if you import the class A. And will ask you to change the visibility of the constructor to public.
+************************************************************************
+try{
+				throw new RuntimeException();
+			}
+			catch(Exception e){
+				System.out.println("Test");
+			}
+
+			
+Output?
+************************************************************************
+Purpose of serializing Singleton class OR  purpose of saving singleton state?
+Answer. Let’s take example of our laptop, daily eod we need to shut it down, but rather than shutting it down hibernate (save state of  laptop) is better option because it enables us to resume at same point where we leaved it, like wise serializing singleton OR saving state of Singleton can be very handy.
+************************************************************************
+Final method are inherited in subclasses in java.
+************************************************************************
+Advantage of Final keyword:
+declaring variable, class or method as final improves performance, because JVM caches them. JVM caches them because -
+final variable cannot be changed in java, 
+Runtime polymorphism is not applicable on final methods because they cannot be overridden in java.
+final classes cannot be inherited in java.
+
+************************************************************************
+When try and finally block both return value, method will ultimately return 
+value returned by finally block irrespective of value returned by try block.
+************************************************************************
+Integer.parseInt(null) -- will give you runtime exception of NumberFormatException
+************************************************************************
+Primitive variables and references to objects are stored in stack. Rest everything(not sure) is stored in heap which is
+accessible from anywhere.
+xss - stack size
+xms and xmx for heap size max and min
+
+************************************************************************
+Until and unless you dont write your own constructor, java will provide its own default constructors
+************************************************************************
+Disadvantages of immutable objects:
+
+Creating an immutable class seems at first to provide an elegant solution.
+ However, whenever you do need a modified object of that new type you must suffer the overhead 
+ of a new object creation, as well as potentially causing more frequent garbage collections. 
+ The only real disadvantage of immutable classes is that they require a separate object for each distinct value.
+************************************************************************ 
+oout.writeObject(getInstance()); -- in case of Singleton classes, you need not create the new object. Just use the getInstance method
+************************************************************************ 
+where would you use abstract classes and not interfaces? real life example? -- Example of class shape
+************************************************************************
+DispatcherServlet is used to communicate between browser and controller.
+************************************************************************
+what if i am using a mutable field and two threads do operations on it?
+
+1 - What if two threads try to read same resource without synchronization?
+Ans - When two threads try to read on same resource without synchronization, it’s never going to create any problem.
+
+2 - What if two threads try to write to same resource without synchronization?
+Ans - When two threads try to write to same resource without synchronization, it’s going to create synchronization problems.
+************************************************************************
+Can a Constructor be synchronized?
+Constructors is a special member function of a class that is mainly used for object initilization. 
+no constructors cannot be marked synchronized There is no practical need for a constructor to be synchronized, 
+because it would lock the object under construction, which is normally not made available to other threads
+until all constructors for the object have completed their work.
+************************************************************************
+public class MyClass extends Thread{
+ 
+    public void run() {
+           method1();
+    }
+    
+    public static void method1() {
+       synchronized (this) { 
+           System.out.println("2 ");
+           }
+    }
+   
+    public static void main(String[] args) {
+           new Thread(new MyClass()).start();
+    }
+   
+}
+
+
+Answer.  We will face compilation error at line synchronized (this) can’t use in static context, because it’s not possible to obtain lock on object from static method. Though we can obtain lock on class’s class object , so synchronized (MyClass.class) will be a valid statement.
+************************************************************************
+System.out.println(null); -- What will be the output? - https://stackoverflow.com/questions/36325277/why-does-system-out-printlnnull-give-the-method-printlnchar-is-ambiguo
+************************************************************************
+https://dzone.com/articles/global-exception-handling-with-controlleradvice and https://www.toptal.com/java/spring-boot-rest-api-error-handling :
+@ExceptionHandler allows you to define a method that, as the name suggests, handles exceptions. 
+If you weren’t using @ControllerAdvice , the code for handling these exceptions would be in the controllers themselves, 
+which could add quite a bit of duplication and clutter to the class and leading to it not being as “clean”.
+You could move the @ExceptionHandler methods into a base class that the controller extends to separate the code. 
+This method is not perfect and comes with the issue that every controller where you need this global 
+exception handling will now need to extend the base controller. Therefore, when you create a new controller 
+and forget to extend this base class, you are now no longer handling some exceptions and might get bitten in the butt later on.
+Using @ControllerAdvice along with @ExceptionHandler prevents this by providing global (and more specific) error handling
+so you don’t need to remember to implement them yourself or extend another class every time.
+************************************************************************
+String, Integer, Long , Date and all other wrapper classes implements Comparable
+************************************************************************
+Algorithm used by Comparator for sorting in java >
+Implement Comparator interface and override its compare method in java.
+Call Collections.sort and pass list [i.e. list] as parameter.
+Collections.sort internally calls Arrays.sort,
+Arrays.Sort() internally calls Merge Sort.
+Merge sort calls overridden compare method of Comparator interface for comparison of values.
+
+ Must know fact :
+If number of elements is less than 7 then Insertion Sort is used rather than Merge Sort. 
+(because in case elements are less than 7 it offers better time complexity)
+************************************************************************
+The Runnable interface is very similar to the Callable interface. Both interfaces represents a task that can be executed concurrently by a thread or an ExecutorService. Both interfaces only has a single method. There is one small difference between the Callable and Runnable interface though. The difference between the Runnable and Callable interface is more easily visible when you see the interface declarations.
+
+Here is first the Runnable interface declaration:
+
+public interface Runnable {
+    public void run();
+}
+And here is the Callable interface declaration:
+
+public interface Callable{
+    public Object call() throws Exception;
+}
+The main difference between the Runnable run() method and the Callable call() method is that the call() method can return an Object from the method call. Another difference between call() and run() is that call() can throw an exception, whereas run() cannot (except for unchecked exceptions - subclasses of RuntimeException).
+
+If you need to submit a task to a Java ExecutorService and you need a result from the task, then you need to make your task implement the Callable interface. Otherwise your task can just implement the Runnable interface.
+************************************************************************
+public static void main(String[] args) {
+		String stringWithDuplicates = "afsjeadrffafvgdefeverhfgberAAad";
+		char[] characters = stringWithDuplicates.toCharArray();
+		int length = characters.length;
+		System.out.println("String with duplicates : " + stringWithDuplicates);
+	for (int i = 0; i < length; i++) {
+            for (int j = i + 1; j < length; j++) {
+                if (characters[i] == characters[j]) {
+                    int temp = j;//set duplicate element index
+ 
+                    //delete the duplicate element by shifting the elements to left
+                    for (int k = temp; k < length - 1; k++) {
+                    	characters[k] = characters[k + 1];
+                    }
+                    j--;
+                    length--;//reduce char array length
+ 
+                }
+            }
+        }
+	String stringWithOutDuplicates = new String(characters);
+	stringWithOutDuplicates = stringWithOutDuplicates.substring(0, length);
+	System.out.println("String after duplicates removed : " + stringWithOutDuplicates);
+}
+************************************************************************
+null == null always return true. What for null.equals(null)?
+************************************************************************
+abstract class A{
+	synchronized void display(){
+	System.out.println("class A disp method");
+	}
+} 
+
+class B extends A{
+	
+	@Override
+	synchronized void display(){
+	super.display();
+	System.out.println("class B disp method");
+	}
+}
+class MainTest{
+public static void main(String args[]){
+	B b = new B();
+}
+}
+How the object lock acquiring would happen in the above program?
+Ans : (hint) abstract class cant have any object instantiation, so object lock of abstract class cant happen.
+************************************************************************
+Hashtable works completely like hashmap. Entry object gets saved.
+Put, get everything same. only difference is hashtable is synchronized and doesnt allow null.
+https://stackoverflow.com/questions/11981852/why-hashtable-does-not-allow-null-keys-or-values -- why hashtable doesnt allow null?
+read the answer first.
+Also, you will be asked that even hashmap uses .equals and .hashcode for storing but the catch is hashmap doesnt compute or uses equals or hashcode method for null keys
+************************************************************************
+Constructs an empty HashMap with the default initial capacity (16) and the default load factor (0.75). Hashtable: Constructs a new, empty hashtable with a default initial capacity (11) and load factor (0.75)
+************************************************************************
+When you override equals, hashcode and compareTo method of comparable interface in a Employee class and :
+1 - Declare a hashset of Employee. Then in that case compareTo method would be completely ignored.
+2 - Declare a TreeSet of Employee. Then in that case equals and hashcode or just equals would be completely ignored.
+
+Then the question is what about the hidden contract between equals and comparable interface?
+Ans : It is used for us so as to avoid confusion.
+************************************************************************
+bounded and unbounded wildcards in java
+how do you deploy your application?
+which server you use?
+how does server come to know which property file to pick up?
+How to create a list which will accept all types of wrapper classes but not String?
+
+When you write Set<T> or List<T> and make an object of Set<Integer>/List<Integer> then T becomes of type Integer, correct? So how does this happen?
+Which is the common class that all wrapper classes extend?
+Do you require JRE to compile your classes?
+Does maven also downloads the jar on the server when you run your application for the first time?If no, then how does it get all those jars over the server?
+
+can multiple objects have 0 as hashcode? what if i override my hascode and return 0 everytime?will linkedlist be formed in that case?
+dictionary implementation. calculator implementation
+How to sort a hashMap on the basis of its values
+Can i define a class as singleton and have prototype beans inside of it?
+DispatcherServlet	
+Does 
+In my main method, i am calling multiple threads. One of the thread fails by throwing a runtimeException.
+how would i handle it or come to know about the same? will all my other threads proceed?
+
+where would you use abstract classes and not interfaces? real life example?
+Java 8
+
+
+how to return a value from the thread
+
+Do the questions from the phone
+how to return value from the run method
+How will you return a json response?
+i mean you get the response in the form of java object toh how will you send it. i told using the response entity
+
+Atomic integer 
+
+what if i am using a mutable field and two threads do operations on it
+how to return a value from the thread
+
+why enums when you can define constants
+composition and aggregation
+isolation
+how to convert jar to war and viceversa
+
+Find out all the possible combinations of this string and see if even any one of them is palindrome or not
+
+
+types of class loaders
+can we execute mutilple select or create queries using addBatch method in statement?
+what if in https://www.javamadesoeasy.com/2015/07/jdbc-statement-example-execute-update.html i write multipe executeUpdate statements with different queries.
+Deque
+Java generics
+Spring injection
+innerclasses
+microservices
+Junit testing - mocking
+Servicebus and JMSlistener kuch bolne layak
+Exception hierarchy,  exception propagation or if a superclass has declared throws of this this then can my subclass declare the throws with the same list of exceptions? and questions arnd that.
+Types of application servers? what all have you used?
+what is maven? is it a application server?
+
+what are microservices?
+interview questions on staic blocks
+
+custom iterators
+
+when you initialize your spring application, does it create objects at that time or when you use/requet them? 
+what will happen if my scope is singleton and wht if it is prototype?
+@lazy and @eager
+
+100 users want a connection to a database. how would you provide them?
+will you write driverManager.getConnection() 100 times or driverManager.registerDriver 100 times or how would you do it?
+
+Why do you register your database before getting a connection? what if you dont do?
+
+internal implementation of set?
+How do you generate Database entity objects? Also JAXB Object generation.
+executor framework?
+
+bean scopes? explain them in one line
+sorting
+
+How to manage transaction in a database
+what is Blocking queue? How to solve Producer Consumer problem using blocking queue?
+Executor service used for multithhreading
+connection pooling  and thread pooling
+Triggers
+Regular Expressions
+indexes, views
+partitions
+other design patterns
+
+procedures functions that you have written
+the difficult code which you wrote last time
+Kamal sir notes
+Analytical functions -- Low priority
+
+***************************************DEADLOCK*****************************
+
+https://javarevisited.blogspot.com/2018/08/how-to-avoid-deadlock-in-java-threads.html   , https://www.tutorialspoint.com/java/java_thread_deadlock.htm 
+
+Important Points to Avoid Deadlock:
+1)  Lock a specific member variables of class rather than  locking a whole class.
+2)  Use Thread join method, possible try to use join method. Advantage of join is it will start and end sequentially.
+
+            VisualVM and jstack these are the tools to detect the deadlock in java. For more details about VisualVM and jstack refer Java thread dump.
+
+-- deadlock and its solution	
+https://www.javamadesoeasy.com/2015/03/solve-consumer-producer-problem-by.html , https://dzone.com/articles/java-concurrency-blocking-queu - what is Blocking queue? How to solve Producer Consumer problem using blocking queue?
+https://javarevisited.blogspot.com/2016/04/difference-between-ExecutorServie-submit-vs-Executor-execute-method-in-Java.html -- Difference between execute and submit methods of ExecutorService
+http://www.thejavageek.com/2016/06/05/working-linkedhashmap-java/ -- How does LinkedHashMap maintain insertion order?
+https://www.journaldev.com/716/java-enum -- Enums in Java
+https://stackoverflow.com/questions/19602601/create-an-arraylist-with-multiple-object-types -- How to create a list which will accept all types of wrapper classes but not String
+https://www.journaldev.com/1827/java-design-patterns-example-tutorial#prototype-pattern , https://www.journaldev.com/1440/prototype-design-pattern-in-java -- Prototype Design pattern in Java
+https://www.journaldev.com/1392/factory-design-pattern-in-java -- Factory Design Pattern in Java.
+https://stackoverflow.com/questions/6008241/what-is-the-difference-between-e-and-t-for-java-generics -- Difference between E and T in Generics
+https://www.techonthenet.com/oracle/views.php -- view
+https://www.techonthenet.com/oracle/functions/case.php -- case when
+ You can convert array to a list and use get of 0 or null to get the missing element // https://stackoverflow.com/questions/2113795/quickest-way-to-find-missing-number-in-an-array-of-numbers -- Find missing number in an array
+http://www.oracletutorial.com/oracle-basics/oracle-merge/  , https://docs.oracle.com/cd/B28359_01/server.111/b28286/statements_9016.htm#SQLRF01606  -- Merge Query
+https://www.geeksforgeeks.org/interesting-facts-about-null-in-java/ , https://javarevisited.blogspot.com/2014/12/9-things-about-null-in-java.html -- Null keyword. Null is neither an object nor the variable. its a keyword
+http://www.techiedelight.com/count-frequency-elements-list-java/ -- count frequency of element in java
+https://assertible.com/blog/7-http-methods-every-web-developer-should-know-and-how-to-test-them#patch – what are head and patch methods
+https://www.tutorialspoint.com/git/  , http://rogerdudler.github.io/git-guide/ , https://rubygarage.org/blog/most-basic-git-commands-with-examples  -- git
+https://www.geeksforgeeks.org/iterate-map-java/ -- how to iterate over map
+https://www.geeksforgeeks.org/top-10-algorithms-in-interview-questions/#algo5 – search for tree/Binary search tree and read all the links
+https://www.edureka.co/blog/interview-questions/git-interview-questions/ , https://www.toptal.com/git/interview-questions , https://career.guru99.com/top-40-interview-questions-on-git/  -- git
+https://www.geeksforgeeks.org/in-a-linked-list-given-only-a-pointer-to-a-node-to-be-deleted-in-a-singly-linked-list-how-do-you-delete-it/ -- how to delete a particular node without back traversing
+https://www.geeksforgeeks.org/write-a-c-function-to-print-the-middle-of-the-linked-list/ -- how to find middle element in linkedlist
+https://stackoverflow.com/questions/10099573/how-treeset-checks-for-duplicates , https://dzone.com/articles/the-hidden-contract-between-equals-and-comparable – How treeset behaves when 2 equal objects are inserted and not overridden equals and hashcode and comparable returns 0
+https://www.geeksforgeeks.org/in-a-linked-list-given-only-a-pointer-to-a-node-to-be-deleted-in-a-singly-linked-list-how-do-you-delete-it/ -- how to delete a particular node without back traversing
+https://www.geeksforgeeks.org/write-a-c-function-to-print-the-middle-of-the-linked-list/ -- how to find middle element in linkedlist
+https://softwareengineering.stackexchange.com/questions/371642/why-does-integer-min-value-integer-max-value-equals-to-1-in-java , https://stackoverflow.com/questions/9397475/why-integer-max-value-1-integer-min-value/9397552 -- what if integer overflows?
+https://javarevisited.blogspot.com/2014/07/9-difference-between-tcp-and-udp-protocol.html -- Difference between TCP and UDP
+https://stackoverflow.com/questions/14038316/can-i-use-tcp-in-a-restful-service -- REST uses TCP or UDP?(SOAP is a protocol specification for exchanging structured information in the implementation of Web Services. It uses XML for the message format. It is independent of the transport protocol (could be HTTP, FTP, TCP, UDP, or named pipes))
+https://www.geeksforgeeks.org/arraylist-array-conversion-java-toarray-methods/ -- Converting list to Array
+https://stackoverflow.com/questions/8119366/sorting-hashmap-by-values , https://www.geeksforgeeks.org/sorting-a-hashmap-according-to-values/  -- Sorting HashMap based on Values
+https://www.geeksforgeeks.org/valid-variants-main-java/ -- Different combinations of Main method
+https://www.geeksforgeeks.org/object-level-class-level-lock-java/ -- What are class level and thread level locks.
+https://javarevisited.blogspot.com/2010/10/how-to-check-if-thread-holds-lock-on.html -- Whether a thread holds lock on some object or not
+https://www.forward.com.au/javaProgramming/threadReturnsPackage/ToCatchAThread.html -- In my main method, i am calling multiple threads. One of the thread fails by throwing a runtimeException.
+how would i handle it or come to know about the same? will all my other threads proceed?
+https://en.proft.me/2013/11/24/advantages-and-disadvantages-immutable-objects-jav/ -- Advantage of creating IMMutable Objects
+http://saturnboy.com/2010/11/testing-private-methods-in-java/ , https://www.tutorialspoint.com/java/lang/class_getdeclaredmethod.htm , https://www.wikitechy.com/technology/test-class-private-methods-fields-inner-classes/  , https://medium.com/@eranda/java-testing-validating-private-fields-and-methods-using-java-reflections-8666fc4c7418 -- How to test a private method in java(Junit of a private method)
+https://stackoverflow.com/questions/451182/stopping-inheritance-without-using-final (read answer by Landon Kuhn)-- 2 ways to stop inheritance of a class in java?
+https://docs.oracle.com/javase/9/core/creating-immutable-lists-sets-and-maps.htm#JSCOR-GUID-ECD1A3C5-14A7-47E2-995E-40C9B6B935C4 - making a list/set/map unmodifiable after adding few elements
+https://dzone.com/articles/the-executor-framework , https://www.geeksforgeeks.org/thread-pools-java/ , https://www.javatpoint.com/java-thread-pool , https://examples.javacodegeeks.com/core-java/util/concurrent/executorservice/java-executorservice-example-tutorial/ , http://tutorials.jenkov.com/java-util-concurrent/executorservice.html -- Executor Framework
+https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Future.html , https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Callable.html -- Methods of callable and future interfaces
+https://www.geeksforgeeks.org/callable-future-java/ , https://howtodoinjava.com/java/multi-threading/java-callable-future-example/ , https://www.journaldev.com/1090/java-callable-future-example , https://www.journaldev.com/1090/java-callable-future-example -- Callable and futures
+https://stackoverflow.com/questions/3468252/whats-the-difference-between-importing-and-extending-a-class -- difference between importing and extending-a-class in java
+https://stackoverflow.com/questions/22267919/iterator-vs-for (read all the answers till user3392677) , https://javarevisited.blogspot.com/2017/01/difference-between-for-loop-and-enhanced-forlop-in-java.html#axzz5QoE4Ik5u -- iterator vs for
+https://www.geeksforgeeks.org/differences-jdk-jre-jvm/ https://www.journaldev.com/546/difference-jdk-vs-jre-vs-jvm  https://www.programiz.com/java-programming/jvm-jre-jdk-- JDK JRE AND JVM
+https://stackoverflow.com/questions/630453/put-vs-post-in-rest -- what if you use put for creating a object? Read the answer by using ctrl f and search for Alexander Torstling
+https://www.journaldev.com/4098/java-heap-space-vs-stack-memory -- Difference between stack and heap memory
+(ALSO Read the answer by Sayanthan Mahendran in below link.)
+https://stackoverflow.com/questions/19561332/in-what-order-do-static-blocks-and-initialization-blocks-execute-when-using-inhe#comment82685952_35001374 , http://www.thejavageek.com/2013/07/21/initialization-blocks-constructors-and-their-order-of-execution/ -- what if i have a class with static block, constructor, main method and non static block. what would be the order of execution?
+https://www.javamadesoeasy.com/2015/02/avoid-deserialization-process-creating.html , https://www.javamadesoeasy.com/2015/02/can-you-serialize-singleton-class-such.html -- Serialize Singletone Class
+https://stackoverflow.com/questions/7899543/can-preparedstatement-addbatch-be-used-for-select-queries -- Can select query be used with addBatch() method of preparedStatement?
+Can a reference/object variable be static? -- yes. Remember singleton pattern?
+https://www.geeksforgeeks.org/variable-arguments-varargs-in-java/ -- Var-args in java
+https://www.pluralsight.com/guides/programming-with-assertions-in-java , https://www.javatpoint.com/assertion-in-java   -- assertion-in-java
+https://www.geeksforgeeks.org/stringbuffer-class-in-java/ -- String vs StringBuffer vs StringBuilder
+https://softwareengineering.stackexchange.com/questions/293478/what-are-the-differences-between-class-variables-and-instance-variables-in-java -- instance variables can be static. 
+https://www.javaworld.com/article/2077424/learn-java/learn-java-does-java-pass-by-reference-or-pass-by-value.html , https://www.journaldev.com/3884/java-is-pass-by-value-and-not-pass-by-reference , 
+https://dzone.com/articles/pass-by-value-vs-reference-in-java , https://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-value -- Pass by value or pass by reference
+https://javarevisited.blogspot.com/2011/09/generics-java-example-tutorial.html , https://www.geeksforgeeks.org/generics-in-java/ , https://www.tutorialspoint.com/java/java_generics.htm , https://www.codejava.net/java-core/collections/how-to-write-generic-classes-and-methods-in-java -- Generics in java
+https://dzone.com/articles/java-classnotfoundexception-vs-noclassdeffounderro , https://www.geeksforgeeks.org/classnotfoundexception-vs-noclassdeffounderror-java/ -- ClassNotFoundException is a compile time exception/Checked Exception. difference between NoClassDefFoundError and ClassNotFoundException
+http://www.javamadesoeasy.com/2015/05/checked-compile-time-exceptions-and.html , https://airbrake.io/blog/java-exception-handling/the-java-exception-class-hierarchy , https://www.javatpoint.com/exception-handling-in-java ,  https://www.journaldev.com/2167/java-exception-interview-questions-and-answers#java-exception-hierarchy --  Do exception hierarchy from kamal notes.exception Hierarchy
+https://www.geeksforgeeks.org/nested-classes-java/ , https://www.journaldev.com/996/java-inner-class -- Nested Class
+https://moometric.com/development/java/reverse-a-string-in-java/ -- reverse a string
+http://codippa.com/how-to-remove-duplicate-characters-from-string-in-java/ -- To remove duplicates from a given string
+https://www.geeksforgeeks.org/different-ways-create-objects-java/ , http://www.goyalsbit.com/interview-questions/java-questions/different-ways-to-create-an-object-in-java/ -- Ways of creating objects in java
+org.springframework.web.client.RestClientException,org.springframework.web.client.RestTemplate,import org.springframework.http.HttpStatus;import org.springframework.http.ResponseEntity;
+https://www.journaldev.com/9193/web-services-interview-questions-soap-restful & https://www.softwaretestinghelp.com/web-services-interview-questions/ -- WEB services
+https://www.javamadesoeasy.com/2015/12/top-40-jdbc-interview-questions-and.html -- jDBC and JAVA questions
+https://www.w3schools.com/sql/sql_injection.asp -- SQL Injection
+class.forName(com.mysql.jdbc.Driver, oracle.jdbc.driver.OracleDriver, org.postgresql.Driver, com.microsoft.sqlserver.jdbc.SQLServerDriver)
+https://www.javamadesoeasy.com/2015/12/top-40-jdbc-interview-questions-and.html -- Very Imp Questions
+http://www.java67.com/2012/09/what-is-new-in-java-7-top-5-jdk-7.html && https://javarevisited.blogspot.com/2014/04/10-jdk-7-features-to-revisit-before-you.html -- features of Java 7
+https://www.journaldev.com/592/java-try-with-resources -- Features of Java 7 Try with resources. Also, Finally is possible with try-with-resources block.(The try-with-resources statement is a try statement
+ that declares one or more resources. A resource is an object that must be closed after the program is finished with it. 
+ The try-with-resources statement ensures that each resource is closed at the end of the statement. 
+ Any object that implements java.lang.AutoCloseable, which includes all objects which implement java.io.Closeable, can be used as a resource.)
+https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java -- Can you open a web browser using core java
+https://javarevisited.blogspot.com/2012/02/difference-between-linkedlist-vs.html -- Difference between LinkedList and ArrayList.
+https://stackoverflow.com/questions/3869556/why-a-class-cannot-be-defined-as-protected , https://coderanch.com/t/410134/java/private-protected-class -- why a class cannot be defined as protected? 2nd link for making a class as private
+https://www.geeksforgeeks.org/can-we-overload-or-override-static-methods-in-java/  -- Overloading and overriding static methods.
+
+JAVA OLD CONTENT:
+https://dzone.com/articles/how-hashmap-works-in-java -- internal working of hashmap(code)
+http://javarevisited.blogspot.in/2011/02/how-hashmap-works-in-java.html -- internal working of hashmap(theory)
+http://javaconceptoftheday.com/how-hashmap-works-internally-in-java/
+https://dzone.com/articles/hashmap-custom-implementation
+http://www.javamadesoeasy.com/2015/02/hashmap-custom-implementation.html - hashmap custom implementation
+
+ Collections.sort(people, Collections.reverseOrder());
+https://www.journaldev.com/996/java-inner-class , https://www.geeksforgeeks.org/nested-classes-java/ , https://www.journaldev.com/996/java-inner-class -- Nested Class
+https://www.mkyong.com/java/java-object-sorting-example-comparable-and-comparator/ - eg of anonymous inner class - comparable and comparator
+http://www.javamadesoeasy.com/2015/04/comparable-vs-comparator-differences.html - comparable and comparator(Very imp)
+https://java2blog.com/concurrenthashmap-in-java/ , http://javabypatel.blogspot.com/2016/09/concurrenthashmap-interview-questions.html (imp link) - concurrenthashmap 
+http://www.javamadesoeasy.com/2015/02/overriding-equals-and-hashcode-method.html y in equals v have 2 conditions on same attribute? -- relationship-between-hashcode-and-equals-method-in-java
+http://www.javamadesoeasy.com/2015/02/overriding-equals-and-hashcode-method.html - How do we override equals and hashcode method, write a code to use Employee as key in HashMap? (Important)
+
+(ArrayList, HashSet and HashMap implements Serializable interface, so if we will use them as member of class they will get Serialized and DeSerialized as well.)
+https://www.geeksforgeeks.org/serialization-in-java/ & https://www.javatpoint.com/transient-keyword & https://dzone.com/articles/what-is-serialversionuid - Serializable(The String class and all the wrapper classes implements java.io.Serializable interface by default)
+http://www.javamadesoeasy.com/2015/02/serialization-top-25-interview.html -Doubt Q-4 readObj method. returns void but then when you see main class while loop expects emp. Doubt Q-5  where r we calling constructor during deserialization ( 19 & onwards remaining ) then http://www.javamadesoeasy.com/2015/02/serialize-and-deserialize-object.html then http://www.javamadesoeasy.com/2015/09/avoid-objectinputstreamreadobject-from.html
+http://www.javamadesoeasy.com/2015/05/cloning-in-java-using-clone-shallow-and.html , https://www.journaldev.com/60/java-clone-object-cloning-java , https://dzone.com/articles/java-copy-shallow-vs-deep-in-which-you-will-swim - cloning 
+https://www.journaldev.com/1827/java-design-patterns-example-tutorial , https://www.journaldev.com/1377/java-singleton-design-pattern-best-practices-examples - Singleton Design pattern in java
+https://www.journaldev.com/1827/java-design-patterns-example-tutorial#prototype-pattern , https://www.journaldev.com/1440/prototype-design-pattern-in-java -- Prototype Design pattern in Java
+https://www.journaldev.com/1827/java-design-patterns-example-tutorial#iterator-pattern -- Iterator Pattern in Java.
+http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html , https://blog.gceasy.io/2015/10/30/java-garbage-collection-interview-questions/ , http://java-questions.com/garbagecollection-interview-questions.html , https://www.javatpoint.com/corejava-interview-questions-4 , https://www.javabykiran.com/interview/corejava/garbage-collection-interview-questions.php - GC
+http://www.javatutorialpoint.com/2015/03/custom-marker-interface-in-java.html -- Custom Marker Interface In Java
+http://www.javamadesoeasy.com/2015/05/final-keyword-in-java-20-salient.html - Final keyword
+http://javarevisited.blogspot.in/2011/10/override-hashcode-in-java-example.html
+https://dzone.com/articles/hashmap-custom-implementation - complexity of methods in HashMap
+http://www.javamadesoeasy.com/2015/05/finally-block-in-java.html -- finally block
+http://www.javamadesoeasy.com/2015/05/javalangerror-in-exception-handling-in.html 
+http://www.javamadesoeasy.com/2015/05/checked-compile-time-exceptions-and.html
+http://www.javamadesoeasy.com/2015/05/finalize-method-in-java-10-salient.html
+https://www.geeksforgeeks.org/can-we-overload-or-override-static-methods-in-java/ 
+https://www.geeksforgeeks.org/encapsulation-in-java/ -- encapsulation-in-java
+####################           SQL               #####################################################
+https://blogs.oracle.com/sql/how-to-recover-data-without-a-backup#Recover-a-Few-Rows , https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9012.htm , http://www.dba-oracle.com/r_restore_truncated_table.htm -- Recover deleted data.
+https://www.dotnettricks.com/learn/sqlserver/difference-between-stored-procedure-and-function-in-sql-server ,https://www.guru99.com/subprograms-procedures-functions-pl-sql.html  -- Diff between procedure and function.
+https://www.javamadesoeasy.com/2015/11/jdbc-what-is-javasqlcallablestatement.html
+https://www.techonthenet.com/oracle/functions/nvl.php , https://www.geeksforgeeks.org/sql-general-functions-nvl-nvl2-decode-coalesce-nullif-lnnvl-nanvl/ , https://www.techonthenet.com/oracle/functions/decode.php -- NVL, NVL2, DECODE Functions
+https://oracle.su/docs/11g/timesten.112/e13070/ttsql247.htm -- getDate and sysDate
+http://www.complexsql.com/rowid-rownum/ -- rowId and RowNumber difference
+https://www.wikihow.com/Delete-Duplicate-Records-in-Oracle , http://www.dba-oracle.com/t_delete_duplicate_table_rows.htm -- How to delete duplicates from a table
+https://www.youtube.com/watch?v=RR2wg1gYQQw , https://www.w3schools.com/sql/sql_autoincrement.asp , https://chartio.com/resources/tutorials/how-to-define-an-auto-increment-primary-key-in-oracle/ , https://www.techonthenet.com/oracle/sequences.php -- sequence to create AutoIncremental values.
+http://codingsight.com/methods-to-rank-rows-in-sql-server-rownumber-rank-denserank-and-ntile/ , https://docs.microsoft.com/en-us/sql/t-sql/functions/rank-transact-sql?view=sql-server-2017 -- Rank, DenseRank and RowNumber
+https://www.c-sharpcorner.com/UploadFile/78607b/over-clause-in-sql-server-windows-on-data-part-1/ -- over function 
+https://www.w3schools.com/sql/sql_union.asp -- difference between union and union all
+https://www.w3resource.com/sql/joins/cross-join.php -- cross join
+https://www.techonthenet.com/oracle/exists.php  -- Exists operator
+http://www.complexsql.com/subqueries-correlated-subquery/ , http://sql-plsql.blogspot.com/2011/09/difference-nested-correlated-subquery.html -- Difference between Nested and Correlated subquery.
+http://www.crazyforcode.com/difference-ddl-dml-dcl-commands/ -- DDL,DML and DCL difference
+https://www.c-sharpcorner.com/blogs/difference-between-truncate-delete-and-drop-in-sql-server1 -- Truncate and delete difference
+https://www.quora.com/What-is-the-main-difference-between-Truncate-Delete-and-Drop-in-a-database -- Truncate, drop and delete difference
+https://www.w3resource.com/sql/select-statement/queries-with-distinct-multiple-columns.php 
+http://www.oracletutorial.com/oracle-basics/oracle-order-by/
+https://www.techonthenet.com/oracle/exists.php
+https://www.techonthenet.com/oracle/tables/alter_table.php
+https://stackoverflow.com/questions/7573590/can-a-foreign-key-be-null-and-or-duplicate -- Duplicates and Nulls for a foreing key
+https://www.techonthenet.com/oracle/unique.php -- Unique Key
+https://hemantoracledba.blogspot.com/2009/07/difference-between-not-in-and-not.html -- Difference between NOT IN and NOT EXISTS
+https://www.tutorialspoint.com/sql_certificate/using_the_group_functions.htm -- AggregateFuntions And GroupBy clause
+#################### 		  Thread            ##################################################
+https://www.javatpoint.com/what-if-we-call-run()-method-directly https://www.javatpoint.com/join()-method (t1.join(1500);) - MultiThreading
+https://www.geeksforgeeks.org/operating-system-difference-multitasking-multithreading-multiprocessing/ - Difference between MultiThreading and multiprocessing
+https://dzone.com/articles/threads-top-80-interview 
+http://javarevisited.blogspot.in/2018/02/top-20-spring-rest-interview-questions-answers-java.html
+
+
+#################### 		  MAHESH            ##################################################
+semaphores	https://www.geeksforgeeks.org/semaphore-in-java/
+	https://www.javamadesoeasy.com/2015/03/semaphore-in-java.html
+	
+Excecutor service	https://www.geeksforgeeks.org/thread-pools-java/
+	
+CountDownLatch	https://www.geeksforgeeks.org/countdownlatch-in-java/
+	
+Callable and futures	https://www.geeksforgeeks.org/callable-future-java/
+	https://howtodoinjava.com/java/multi-threading/java-callable-future-example/
+	https://www.journaldev.com/1090/java-callable-future-example
+
+	
+#################### 		  DATA STRUCTURES            ##################################################	
+Conditions in Stack : None;
+Conditions in Queue : front==rear; front != rear
+Conditions in LinkedList : firstElement, somewhere in between element, very first element(or the only element) and Last element
+
+
+https://www.javamadesoeasy.com/2015/01/stacks.html -- Stack Implementation using Array
+https://www.javamadesoeasy.com/2015/01/stack-push-and-pop-employee-object.html , https://www.javamadesoeasy.com/2015/01/stacks-with-generics.html -- Generic Stack Implementation using Array
+https://www.sanfoundry.com/java-program-implement-queue/ , https://www.sanfoundry.com/java-program-implement-queue/ -- Queue Implementation using Array
+https://www.javamadesoeasy.com/2015/01/circular-queue.html -- Circular Queue Implementation using Array
+https://www.javamadesoeasy.com/2015/01/priority-queues.html -- Priority Queue
+https://www.javamadesoeasy.com/2015/01/single-linkedlist-insertdelete-at-first.html -- InsertFirst and DeleteFirst SinglyLinkedList
+https://www.javamadesoeasy.com/2015/01/single-linkedlist-genericinsertdelete.html -- Generic InsertFirst and DeleteFirst SinglyLinkedList
+https://www.javamadesoeasy.com/2015/01/single-linkedlist-insertdelete-at-last.html -- InsertLast and Deletelast SinglyLinkedList
+https://www.geeksforgeeks.org/in-a-linked-list-given-only-a-pointer-to-a-node-to-be-deleted-in-a-singly-linked-list-how-do-you-delete-it/ -- how to delete a particular node without back traversing
+https://www.geeksforgeeks.org/write-a-c-function-to-print-the-middle-of-the-linked-list/ -- how to find middle element in linkedlist
+
+
+
+What is DAO layer? Significance of the same?
+Types of WEBSERVICES? Protocols for both types?
+What are RESTful WEBSERVICES? - Interview Questions 
+How do you generate Database entity objects? Also JAXB Object generation.
+
+Q35. What is exception propagation in java?
+
+
+
+Bit more about System.exit(n) method >
+System.exit terminates JVM.
+Parameters :
+Passing zero as parameter means normal termination &
+Passing non-zero as parameter means abnormal termination.
+
+System.exit(n) internally calls Runtime.getRuntime().exit(n)
+
+ 
+
+ 
+
+Application of finally block in java programs >
+
+We may use finally block to execute code for database connection closing, because closing connection in try or catch block may not be safe.
+
+Why closing connection in try block may not be safe?
+
+Because exception may be thrown in try block before reaching connection closing statement.
+
+ 
+
+ Why closing connection in catch block may not be safe?
+
+Because inappropriate exception may be thrown in try block and we might not enter catch block to close connection.
+
+ 
+
+ 
+
+Why application should not try to catch Error?
+
+Because, in most of cases recovery from an Error is almost impossible. So, application must be allowed to terminate.
+
+Example>
+
+Let’s say errors like OutOfMemoryError and StackOverflowError occur and are caught then JVM might not be able to free up memory for rest of application to execute, so it will be better if application don’t catch these errors and is allowed to terminate.
+
+You can catch anything that is Throwable which means you can catch Error. But an Error represents a serious problem and not advisable to catch. From Java API: "An Error is a subclass of Throwable that indicates serious problems that a reasonable >application should not try to catch.
+
+ 
+
+ 
+
+Accessing static method using object references is a bad practice (we must access static variable using Class Name) and just an extra liberty given by the java designers.
+What are inner classes and Anonymous classes? How to acces  Anonymous classes?
+Can you create static object?
+need of serialversionuid in java
+ 
+
+
+benefits of using design patterns?
+
+------------- private static class SingletonHelper{
+        private static final BillPughSingleton INSTANCE = new BillPughSingleton();
+    }
+    
+    public static BillPughSingleton getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
+	
+	How can he access SingletonHelper.INSTANCE? INSTANCE is private na?
+	
+Using Reflection to destroy Singleton Pattern? Enum Singleton?
+Serialization and Singleton ----------> protected Object readResolve() {
+                                         return getInstance();
+                                           }
+
+problems with simple mark and delete approach in GC
+
+
+responsive applications?The duration taken by garbage collector depends on the strategy used for garbage collection. That’s why it’s necessary to monitor and tune the garbage collector to avoid timeouts in the highly responsive applications.
+
+
+Note
+-------------------->
+
+Reference	Object	Data	          method
+----------------------------------------------------
+Super	    Super	Super	          Super
+Sub	        Sub	    Super + Sub	      Super + Sub
+Sub	        Sub	    Overridden(Sub)	  Overridden(Sub)
+Super	    Sub	    Super	          Super
+Super	    Sub	    Overridden(Super) Overridden(Sub)
+
+
+
+
+---------------------------->How do you connect to the database?
+Add the below dependency in pom.xml :
+<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+Also add the following properties in application.properties:
+spring.datasource.driverClassName.oscs=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.driver-class-name.oscs=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.properties.hibernate.dialect.oscs=org.hibernate.dialect.SQLServerDialect
+
+spring.datasource.url.oscs=<OVERRIDE>
+spring.datasource.username.oscs=<OVERRIDE>
+spring.datasource.password.oscs=<OVERRIDE>
+
+
+
+---------------------------->Rest calls authentication:
+used in RequestAuthInterceptor class which extends HandlerInterceptorAdapter.
+in that we override preHandle method. usmein we 
+
+
+
+
+-------------------->What is difference between using instanceOf operator and getClass() in equals method?
+Answer. If we use instanceOf it will return true for comparing current class with its subclass as well,
+but getClass() will return true only if exactly same class is compared. Comparison with any subclass will return false.
+
+
+-------------------->Abstraction:This is the mechanism to
+
+1-Hide the unnecessary things from user so providing easiness.
+2-Hiding the internal implementation of software so providing security.
+
+Now suppose you went to ATM, swiped your card to withdraw money,some instructions to be followed displayed on the screen, 
+you provide some info like pin code of your account, again some options appeared on screen like withdraw,balance check....,
+Now these things are happening inside,but you are not knowing that how queries are being generated based on your inserted 
+info in atm machine,after queries generation which database these queries are going to,where that database is located,
+which database is being used whether Oracle or Mysql,which language has been used for these implementation 
+like whether java or c or c++,You as a user not knowing anything about these info,so its tough to hack that machine,
+because you don't have enough knowledge about internal implementation,you are using just UI(user interface) for your 
+transaction,If you will try to know about any information mentioned above from the bank people they may call the police by thinking that you are a hacker.
+
+So Actually i want to convey that this way they provide Easiness,Simplicity to user and security to systems.
+
+
+
+----------------------->What classes should i prefer to use a key in HashMap? (http://www.javamadesoeasy.com/2015/02/overriding-equals-and-hashcode-method.html)(Important)
+Answer. This question will check your in depth knowledge of Java’s Collection Api’s. we should prefer String, Integer, Long, Double, Float, Short 
+and any other wrapper class. Reason behind using them as a key is that they override equals() and hashCode() method, we need not to write any 
+explicit code for overriding equals() and hashCode() method.
+
+
+
+----------------------->What is the serialVersionUID constant?
+serialVersionUID is a constant that uniquely identifies a version of a serializable class. The JVM checks this constant during the deserialization process when an object is being constructed from an input stream. If the object being read has a serialVersionUID different than the one specified in the class, the JVM throws an InvalidClassException. This is to make sure that the object being constructed is compatible with its class in having the same serialVersionUID.
+Note that the serialVersionUID is optional. That means the Java compiler will generate one if you don’t explicitly declare it.
+So why should you declare a serialVersionUID explicitly?
+Here’s the reason: The auto-generated serialVersionUID is calculated based on elements of the class: member variables, methods, constructors, etc. If one of these elements get change, the serialVersionUID will be changed as well. Imagine this situation:
+- You wrote a program that stores some objects of the Student class to a file. The Student class doesn’t have a serialVersionUID explicitly declared.
+
+- Some times later you update the Student class (e.g. adding a new private method), and now the auto-generated serialVersionUID gets changed as well.
+
+- Your program fails to deserialize the Student objects written previously because there serialVersionUID are different. The JVM throws an InvalidClassException.
+
+That’s why it’s recommended to add a serialVersionUID explicitly for a serializable class.
+
+
+
+----------------------->Static variables are not serialized because they are not part of the object but part of the class.
+
+
+----------------------->What is the need for serialization in java? and real time example?
+
+
+----------------------->Thread scheduler in java is the part of the JVM that decides which thread should run.
+There is no guarantee that which runnable thread will be chosen to run by the thread scheduler.
+Only one thread at a time can run in a single process.
+The thread scheduler mainly uses preemptive or time slicing scheduling to schedule the threads.
+
+
+
+---------------------->Can we start a thread twice?
+No. After starting a thread, it can never be started again. If you does so, an IllegalThreadStateException is thrown.
+ In such case, thread will run once but for second time, it will throw exception.
+ 
+ 
+ --------------------->Daemon thread in java is a service provider thread that provides services to the user thread. 
+ Its life depend on the mercy of user threads i.e. when all the user threads dies, JVM terminates this thread automatically.
+There are many java daemon threads running automatically e.g. gc, finalizer etc.
+The sole purpose of the daemon thread is that it provides services to user thread for background supporting task
+Note: If you want to make a user thread as Daemon, it must not be started otherwise it will throw IllegalThreadStateException.(https://www.javatpoint.com/daemon-thread)
+
+
+
+---------------------->Creating Islands of Isolation(https://www.quora.com/What-is-Island-of-isolation-in-Garbage-Collection-Java) : If you have two instance reference variables which are referring to 
+the instances of the same class, and these two reference variables refer to each other and the objects referred by 
+these reference variables do not have any other valid reference then these two objects are said to form an Island of 
+Isolation and are eligible for Garbage Collection.
+
+
+
+----------------------->1)If final memberVariable is not declared at time of declaration we will face compilation error= “The blank final field x may not have been initialized”’.
+2)If constructor is defined then final memberVariable can be initialized in constructor but  once initialized cannot be assigned a new value.
+class FinalTest {
+    final int x; //final memberVariable/instanceVariable
+    FinalTest() {
+           x = 1; //final memberVariable can be initialized in constructor.
+    }
+}
+3)Final local variable can be left uninitialized at time of declaration and can be initialized later, but once initialized cannot be assigned a new value in java.
+class FinalTest {
+    void method(){          
+           final int x; //final variable uninitialized at time of declaration
+           x=1;
+    }   
+}
+4)Final static variable of class must be initialized at time of declaration or can be initialized in static block, once initialized final static variable cannot be assigned a new value.
+
+ If static block is defined then final static variable can be initialized in static block, once initialized final static variable cannot be assigned a new value in java.
+class FinalTest {
+    final static int x; //final static variable
+    static{ //static block
+          x=1;
+    }
+}
+
+
+Runtime polymorphism is not applicable on final methods because they cannot be inherited.
+-------------------------->Final method are inherited in subclasses in java.
+class Superclass {
+    final void superclassFinalMethod(){
+           System.out.println("in Superclass final method");
+    }
+}
+ 
+class Subclass extends Superclass{
+    void subclassmethod(){
+           System.out.println("in sub class method");
+    } 
+}
+ 
+/** Copyright (c), AnkitMittal JavaMadeSoEasy.com */
+public class FinalTest {
+    public static void main(String[] args) {
+           Subclass obj=new Subclass();
+           obj.superclassFinalMethod();
+    }
+}
+ 
+/*OUTPUT
+ 
+in Superclass final method
+ 
+*/
+
+ superclassFinalMethod method of Superclass was inherited in Subclass.
